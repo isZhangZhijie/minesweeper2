@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>扫雷</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    .canvas-box {
+      /*margin: 100px;*/
+    }
+    #canvas {
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="canvas-box">
+    <canvas id="canvas">对不起，您的浏览器不支持canvas</canvas>
+  </div>
+  <script type="text/javascript" src="./assets/js/mine.js"></script>
+  <script>
+    let mine
+
+    window.onload = function () {
+      mine = new Mine(30, 16, 99, 'canvas')
+      mine.init()
+    }
+  </script>
+</body>
+</html>
