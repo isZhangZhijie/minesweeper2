@@ -14,12 +14,14 @@ function Mine (xNum, yNum, mineNum, canvasEle) {
   this.canvas = document.querySelector('#' + canvasEle)
   this.ctx = this.canvas.getContext('2d')
   this.imgPath = './assets/img/' // 图片相对路径
+  
 }
 
 // let e = e || window.event;
 
 Mine.prototype = {
   init: function () {
+    // console.log('init')
     // 画布宽高
     this.canvas.width = this.cellSize * this.xNum
     this.canvas.height = this.cellSize * this.yNum
@@ -72,7 +74,7 @@ Mine.prototype = {
   onclick: function () {
     let that = this
     // 用mouseup左击右击均触发
-    this.canvas.addEventListener('mouseup', (e) => {
+    this.canvas.onmouseup = function(e) {
       let pos = that.getCellPos(that.getEventCoord(e))
       if(that.firstClick) {
         that.createMineArr(pos)
@@ -80,7 +82,7 @@ Mine.prototype = {
       }
       e = e || window.event
       that.triggerClick(pos, e)
-    })
+    }
   },
   triggerClick: function (pos, e) {
     // console.log(e)
@@ -94,11 +96,11 @@ Mine.prototype = {
       this.rightClick(pos, theCell)
       return
     }
-    if(theCell.mark != 0) return // 有标记不能点击
+    if(theCell.mark == 1) return // 插旗不能点击，问号可点击
 
     if(theCell.num == 9) { // 点到雷
-      this.drawCell(pos, 5)
       theCell.isOpened = true
+      this.clickMine(pos)
     } else if(theCell.num == 0) {
       this.drawNum(pos, theCell.num)
       theCell.isOpened = true
@@ -119,7 +121,25 @@ Mine.prototype = {
       theCell.isOpened = true
     }
   },
-  rightClick (pos, theCell) { // 右击
+  clickMine: function (pos) {
+    this.showAllMines()
+    this.drawCell(pos, 5)
+    this.canvas.onmouseup = ''
+  },
+  showAllMines: function () { // 点击到雷，显示所有雷
+    let mineArr = this.mineArr
+    for(let i = 0; i < this.yNum; i++) {
+      for(let j = 0; j < this.xNum; j++) {
+        if(mineArr[i][j].num == 9) {
+          this.drawCell([j, i], 4)
+        }
+        if(mineArr[i][j].num != 9 && mineArr[i][j].mark == 1) {
+          this.drawCell([j, i], 6)
+        }
+      }
+    }
+  },
+  rightClick: function (pos, theCell) { // 右击
     if(theCell.mark == 0) {
       this.drawCell(pos, 2)
       theCell.mark = 1
